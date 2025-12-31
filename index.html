@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Itens RANCHO DO AÇAI - Gerador de PDF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo-area {
+            margin-bottom: 15px;
+        }
+        
+        #company-logo {
+            max-height: 80px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: white;
+            padding: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .categories-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .list-section {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #4a00e0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .category {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .category:hover {
+            transform: translateY(-5px);
+        }
+
+        .category h3 {
+            color: #8e2de2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .category h3 i {
+            margin-right: 10px;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9ff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+
+        .item:hover {
+            background-color: #eef2ff;
+            border-color: #8e2de2;
+        }
+
+        .item.selected {
+            background-color: #e6f7ff;
+            border-color: #4a00e0;
+        }
+
+        .item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .item label {
+            cursor: pointer;
+            flex-grow: 1;
+            font-size: 0.9rem;
+        }
+
+        .quantity-control {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-left: 10px;
+            min-width: 100px;
+        }
+
+        .unit-selector {
+            display: flex;
+            margin-bottom: 5px;
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .unit-btn {
+            flex: 1;
+            padding: 3px 6px;
+            border: none;
+            background-color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .unit-btn.active {
+            background-color: #4a00e0;
+            color: white;
+        }
+
+        .quantity-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .quantity-input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 3px;
+            font-size: 0.9rem;
+        }
+
+        .qty-buttons {
+            display: flex;
+            flex-direction: column;
+            margin-left: 5px;
+        }
+
+        .qty-btn {
+            width: 20px;
+            height: 15px;
+            border: none;
+            background-color: #8e2de2;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .qty-btn:first-child {
+            border-radius: 3px 3px 0 0;
+            margin-bottom: 1px;
+        }
+
+        .qty-btn:last-child {
+            border-radius: 0 0 3px 3px;
+        }
+
+        .custom-item {
+            display: flex;
+            margin-top: 15px;
+        }
+
+        .custom-item input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px 0 0 5px;
+            font-size: 1rem;
+        }
+
+        .custom-item button {
+            background-color: #4a00e0;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .list-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .clear-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .clear-btn i {
+            margin-right: 5px;
+        }
+
+        .list-items {
+            min-height: 300px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item-name {
+            font-weight: 500;
+        }
+
+        .list-item-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .list-item-quantity {
+            background-color: #4a00e0;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .list-item-unit {
+            background-color: #8e2de2;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .empty-list {
+            text-align: center;
+            color: #888;
+            padding: 50px 0;
+            font-style: italic;
+        }
+
+        .pdf-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .generate-pdf {
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(142, 45, 226, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .generate-pdf:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(142, 45, 226, 0.4);
+        }
+
+        .generate-pdf i {
+            margin-right: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .quantity-control {
+                min-width: 90px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <img id="company-logo" src="WhatsApp Image 2025-12-29 at 21.02.11.jpeg" alt="Logo">
+            </div>
+            <h1><i class="fas fa-list-check"></i> LISTA DE ITENS RANCHO DO AÇAI</h1>
+            <p>Adicione os itens que estão faltando para o seu negócio de açaí e gere uma lista em PDF para compras ou controle de estoque.</p>
+        </header>
+
+        <div class="app-container">
+            <div class="categories-section">
+                <h2 class="section-title"><i class="fas fa-boxes"></i> Categorias</h2>
+                
+                <div class="category">
+                    <h3><i class="fas fa-apple-alt"></i> Frutas</h3>
+                    <div class="items-grid" id="fruits-container">
+                        <!-- Itens de frutas serão inseridos aqui pelo JavaScript -->
+                    </div>
+                    <div class="custom-item">
+                        <input type="text" id="new-fruit" placeholder="Adicionar nova fruta">
+                        <button id="add-fruit"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3><i class="fas fa-cookie"></i> Complementos</h3>
+                    <div class="items-grid" id="toppings-container">
+                        <!-- Itens de complementos serão inseridos aqui pelo JavaScript -->
+                    </div>
+                    <div class="custom-item">
+                        <input type="text" id="new-topping" placeholder="Adicionar novo complemento">
+                        <button id="add-topping"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3><i class="fas fa-ice-cream"></i> Açaí e Sorvetes</h3>
+                    <div class="items-grid" id="acai-container">
+                        <!-- Itens de açaí e sorvete serão inseridos aqui pelo JavaScript -->
+                    </div>
+                    <div class="custom-item">
+                        <input type="text" id="new-acai" placeholder="Adicionar novo item">
+                        <button id="add-acai"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3><i class="fas fa-broom"></i> Produtos de Limpeza</h3>
+                    <div class="items-grid" id="cleaning-container">
+                        <!-- Itens de limpeza serão inseridos aqui pelo JavaScript -->
+                    </div>
+                    <div class="custom-item">
+                        <input type="text" id="new-cleaning" placeholder="Adicionar novo produto">
+                        <button id="add-cleaning"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3><i class="fas fa-utensils"></i> Utensílios</h3>
+                    <div class="items-grid" id="utensils-container">
+                        <!-- Itens de utensílios serão inseridos aqui pelo JavaScript -->
+                    </div>
+                    <div class="custom-item">
+                        <input type="text" id="new-utensil" placeholder="Adicionar novo utensílio">
+                        <button id="add-utensil"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-section">
+                <h2 class="section-title"><i class="fas fa-clipboard-list"></i> Sua Lista</h2>
+                
+                <div class="list-container">
+                    <div class="list-header">
+                        <h3>Itens Selecionados</h3>
+                        <button class="clear-btn" id="clear-list"><i class="fas fa-trash"></i> Limpar Lista</button>
+                    </div>
+                    
+                    <div class="list-items" id="list-items-container">
+                        <div class="empty-list">Nenhum item adicionado à lista. Selecione itens das categorias ao lado.</div>
+                    </div>
+                    
+                    <div class="pdf-section">
+                        <button class="generate-pdf" id="generate-pdf">
+                            <i class="fas fa-file-pdf"></i> Gerar PDF da Lista
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>LISTA DE ITENS RANCHO DO AÇAI &copy; 2025  DESENVOLVIDO POR THYESKO MENÃO <- Use para controle de estoque e compras</p>
+        </footer>
+    </div>
+
+    <script>
+        // Dados iniciais dos itens
+        const initialItems = {
+            fruits: [
+                '<img width="48" height="48" src="https://img.icons8.com/color/48/banana.png" alt="banana"/> Banana',
+                '<img width="48" height="48" src="https://img.icons8.com/fluency/48/strawberry.png" alt="strawberry"/> Morango',
+                '<img width="48" height="48" src="https://img.icons8.com/emoji/48/pineapple-emoji.png" alt="pineapple-emoji"/> Abacaxi',
+                '<img width="64" height="64" src="https://img.icons8.com/cute-clipart/64/kiwi.png" alt="kiwi"/> Kiwi',
+                '<img width="64" height="64" src="https://img.icons8.com/external-tulpahn-outline-color-tulpahn/64/external-grape-fruit-tulpahn-outline-color-tulpahn.png" alt="external-grape-fruit-tulpahn-outline-color-tulpahn"/> Uva'
+            ],
+            toppings: [
+                '<img width="94" height="94" src="https://img.icons8.com/3d-fluency/94/chocolate-bar.png" alt="chocolate-bar"/> Nutella',
+                '<img width="48" height="48" src="https://img.icons8.com/lollipop/48/confetti.png" alt="confetti"/> Confete',
+                '<img width="48" height="48" src="https://img.icons8.com/color/48/cereal.png" alt="cereal"/> Ovomaltine',
+                '<img width="50" height="50" src="https://img.icons8.com/external-vitaliy-gorbachev-color-vitaly-gorbachev/50/external-condensed-milk-russia-vitaliy-gorbachev-color-vitaly-gorbachev.png" alt="external-condensed-milk-russia-vitaliy-gorbachev-color-vitaly-gorbachev"/> Leite Condensado',
+                '<img width="48" height="48" src="https://img.icons8.com/fluency/48/box-of-cereal.png" alt="box-of-cereal"/> Granola',
+                '<img width="48" height="48" src="https://img.icons8.com/color/48/rolled-oats.png" alt="rolled-oats"/> Paçoca',
+                '<img width="96" height="96" src="https://img.icons8.com/external-goofy-color-kerismaker/96/external-Milk-Powder-baby-shower-goofy-color-kerismaker.png" alt="external-Milk-Powder-baby-shower-goofy-color-kerismaker"/> Leite em Pó',
+                '<img width="94" height="94" src="https://img.icons8.com/3d-fluency/94/peanut.png" alt="peanut"/> Castanha de Amendoim',
+                '<img width="50" height="50" src="https://img.icons8.com/scribby/50/chickpeas.png" alt="chickpeas"/> Farofa de Amendoim',
+            ],
+            acai: [
+                '<img width="48" height="48" src="https://img.icons8.com/pulsar-color/48/whole-watermelon.png" alt="whole-watermelon"/> Caixa de Açaí Polpa Norte',
+                '<img width="48" height="48" src="https://img.icons8.com/fluency/48/chocolate-spread.png" alt="chocolate-spread"/> Mistura de Chocolate',
+                '<img width="64" height="64" src="https://img.icons8.com/external-colored-outline-lafs/64/external-vanila-flavors-colored-outline-part-3-colored-outline-lafs-3.png" alt="vanilla"/> Mistura de Baunilha',
+                '<img width="48" height="48" src="https://img.icons8.com/color/48/brigadeiro.png" alt="brigadeiro"/> Jeito Max Trufado',
+                '<img width="48" height="48" src="https://img.icons8.com/pulsar-gradient/48/brigadeiro.png" alt="brigadeiro"/> Jeito Max Napolitano'
+            ],
+            cleaning: [
+                '<img width="64" height="64" src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-alcohol-addictions-flaticons-lineal-color-flat-icons.png" alt="alcohol"/> Álcool 70%',
+                '<img width="60" height="60" src="https://img.icons8.com/external-vitaliy-gorbachev-lineal-color-vitaly-gorbachev/60/external-detergent-hygiene-vitaliy-gorbachev-lineal-color-vitaly-gorbachev.png" alt="detergent"/> Detergente',
+                '<img width="64" height="64" src="https://img.icons8.com/external-inipagistudio-lineal-color-inipagistudio/64/external-detergent-house-keeping-inipagistudio-lineal-color-inipagistudio.png" alt="disinfectant"/> Desinfetante',
+                '<img width="48" height="48" src="https://img.icons8.com/doodle/48/rubber-gloves.png" alt="rubber-gloves"/> Luvas Descartáveis',
+                '<img width="80" height="80" src="https://img.icons8.com/officel/80/toilet-paper.png" alt="toilet-paper"/> Papel Toalha',
+                '<img width="64" height="64" src="https://img.icons8.com/external-wanicon-lineal-color-wanicon/64/external-garbage-bag-cleaning-wanicon-lineal-color-wanicon.png" alt="garbage-bag"/> Sacos de Lixo',
+                '<img width="48" height="48" src="https://img.icons8.com/pulsar-gradient/48/deodorant-spray.png" alt="deodorant-spray"/> Limpa Vidros',
+                '<img width="96" height="96" src="https://img.icons8.com/external-goofy-color-kerismaker/96/external-Detergent-groceries-goofy-color-kerismaker.png" alt="bleach"/> Água Sanitária'
+            ],
+            utensils: [
+                '<img width="48" height="48" src="https://img.icons8.com/color-glass/48/spoon.png" alt="spoon"/> Colheres Plásticas Pequenas',
+                '<img width="94" height="94" src="https://img.icons8.com/3d-fluency/94/spoon.png" alt="spoon"/> Colheres Plásticas Grandes',
+                '<img width="48" height="48" src="https://img.icons8.com/pulsar-color/48/sport-drink-cup.png" alt="sport-drink-cup"/> Copos 300ml',
+                '<img width="48" height="48" src="https://img.icons8.com/pulsar-gradient/48/sport-drink-cup.png" alt="sport-drink-cup"/> Copos 500ml',
+                '<img width="48" height="48" src="https://img.icons8.com/pulsar-line/48/sport-drink-cup.png" alt="sport-drink-cup"/> Copos 700ml',
+                '<img width="50" height="50" src="https://img.icons8.com/ios-filled/50/bowl-with-spoon.png" alt="bowl-with-spoon"/> Tigelas para Açaí',
+                '<img width="64" height="64" src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-straw-sustainable-living-flaticons-lineal-color-flat-icons.png" alt="straw"/> Canudos'
+            ]
+        };
+
+        // Estado da aplicação
+        const state = {
+            selectedItems: {}
+        };
+
+        // Inicialização da aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCategories();
+            setupEventListeners();
+            updateList();
+        });
+
+        // Inicializa as categorias com os itens iniciais
+        function initializeCategories() {
+            // Frutas
+            const fruitsContainer = document.getElementById('fruits-container');
+            initialItems.fruits.forEach(fruit => {
+                fruitsContainer.appendChild(createItemElement(fruit, 'fruits'));
+            });
+
+            // Complementos
+            const toppingsContainer = document.getElementById('toppings-container');
+            initialItems.toppings.forEach(item => {
+                toppingsContainer.appendChild(createItemElement(item, 'toppings'));
+            });
+
+            // Açaí e Sorvetes
+            const acaiContainer = document.getElementById('acai-container');
+            initialItems.acai.forEach(item => {
+                acaiContainer.appendChild(createItemElement(item, 'acai'));
+            });
+
+            // Produtos de limpeza
+            const cleaningContainer = document.getElementById('cleaning-container');
+            initialItems.cleaning.forEach(item => {
+                cleaningContainer.appendChild(createItemElement(item, 'cleaning'));
+            });
+
+            // Utensílios
+            const utensilsContainer = document.getElementById('utensils-container');
+            initialItems.utensils.forEach(item => {
+                utensilsContainer.appendChild(createItemElement(item, 'utensils'));
+            });
+        }
+
+        // Cria um elemento de item interativo
+        function createItemElement(name, category) {
+            // Remove tags HTML para gerar um ID limpo
+            const cleanName = name.replace(/<[^>]*>/g, '').trim();
+            const itemId = `${category}-${cleanName.replace(/\s+/g, '-').toLowerCase()}`;
+            
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            itemDiv.dataset.id = itemId;
+            
+            itemDiv.innerHTML = `
+                <input type="checkbox" id="${itemId}">
+                <label for="${itemId}">${name}</label>
+                <div class="quantity-control">
+                    <div class="unit-selector">
+                        <button type="button" class="unit-btn active" data-unit="un" data-id="${itemId}">UN</button>
+                        <button type="button" class="unit-btn" data-unit="cx" data-id="${itemId}">CX</button>
+                    </div>
+                    <div class="quantity-input-container">
+                        <input type="number" min="1" value="1" class="quantity-input" data-id="${itemId}">
+                        <div class="qty-buttons">
+                            <button class="qty-btn increase-btn" data-id="${itemId}">+</button>
+                            <button class="qty-btn decrease-btn" data-id="${itemId}">-</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return itemDiv;
+        }
+
+        // Configura os ouvintes de eventos
+        function setupEventListeners() {
+            // Eventos para checkboxes dos itens
+            document.addEventListener('click', function(e) {
+                // Checkbox de item
+                if (e.target.type === 'checkbox') {
+                    const itemId = e.target.id;
+                    const itemName = e.target.nextElementSibling.textContent;
+                    
+                    if (e.target.checked) {
+                        // Obtém os valores atuais de quantidade e unidade
+                        const quantityInput = document.querySelector(`.quantity-input[data-id="${itemId}"]`);
+                        const activeUnitBtn = document.querySelector(`.unit-btn.active[data-id="${itemId}"]`);
+                        
+                        // Adiciona à lista
+                        if (!state.selectedItems[itemId]) {
+                            state.selectedItems[itemId] = {
+                                name: itemName,
+                                quantity: parseInt(quantityInput.value),
+                                unit: activeUnitBtn.dataset.unit
+                            };
+                        }
+                    } else {
+                        // Remove da lista
+                        delete state.selectedItems[itemId];
+                    }
+                    
+                    updateList();
+                }
+                
+                // Botões de unidade (UN/CX)
+                if (e.target.classList.contains('unit-btn') && !e.target.classList.contains('active')) {
+                    const itemId = e.target.dataset.id;
+                    const unit = e.target.dataset.unit;
+                    
+                    // Atualiza a interface
+                    const unitBtns = document.querySelectorAll(`.unit-btn[data-id="${itemId}"]`);
+                    unitBtns.forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    // Atualiza no estado se o item estiver selecionado
+                    if (state.selectedItems[itemId]) {
+                        state.selectedItems[itemId].unit = unit;
+                        updateList();
+                    }
+                }
+                
+                // Botões de aumentar/diminuir quantidade
+                if (e.target.classList.contains('increase-btn')) {
+                    const itemId = e.target.dataset.id;
+                    increaseQuantity(itemId);
+                }
+                
+                if (e.target.classList.contains('decrease-btn')) {
+                    const itemId = e.target.dataset.id;
+                    decreaseQuantity(itemId);
+                }
+            });
+            
+            // Eventos para input de quantidade
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('quantity-input')) {
+                    const itemId = e.target.dataset.id;
+                    const newValue = parseInt(e.target.value) || 1;
+                    
+                    // Garante que o valor mínimo é 1
+                    if (newValue < 1) {
+                        e.target.value = 1;
+                    }
+                    
+                    // Atualiza no estado se o item estiver selecionado
+                    if (state.selectedItems[itemId]) {
+                        state.selectedItems[itemId].quantity = parseInt(e.target.value) || 1;
+                        updateList();
+                    }
+                }
+            });
+            
+            // Botão para adicionar fruta personalizada
+            document.getElementById('add-fruit').addEventListener('click', function() {
+                const input = document.getElementById('new-fruit');
+                const fruitName = input.value.trim();
+                
+                if (fruitName) {
+                    const fruitsContainer = document.getElementById('fruits-container');
+                    fruitsContainer.appendChild(createItemElement(fruitName, 'fruits'));
+                    input.value = '';
+                }
+            });
+            
+            // Botão para adicionar complemento personalizado
+            document.getElementById('add-topping').addEventListener('click', function() {
+                const input = document.getElementById('new-topping');
+                const toppingName = input.value.trim();
+                
+                if (toppingName) {
+                    const toppingsContainer = document.getElementById('toppings-container');
+                    toppingsContainer.appendChild(createItemElement(toppingName, 'toppings'));
+                    input.value = '';
+                }
+            });
+            
+            // Botão para adicionar açaí/sorvete personalizado
+            document.getElementById('add-acai').addEventListener('click', function() {
+                const input = document.getElementById('new-acai');
+                const acaiName = input.value.trim();
+                
+                if (acaiName) {
+                    const acaiContainer = document.getElementById('acai-container');
+                    acaiContainer.appendChild(createItemElement(acaiName, 'acai'));
+                    input.value = '';
+                }
+            });
+            
+            // Botão para adicionar produto de limpeza personalizado
+            document.getElementById('add-cleaning').addEventListener('click', function() {
+                const input = document.getElementById('new-cleaning');
+                const cleaningName = input.value.trim();
+                
+                if (cleaningName) {
+                    const cleaningContainer = document.getElementById('cleaning-container');
+                    cleaningContainer.appendChild(createItemElement(cleaningName, 'cleaning'));
+                    input.value = '';
+                }
+            });
+            
+            // Botão para adicionar utensílio personalizado
+            document.getElementById('add-utensil').addEventListener('click', function() {
+                const input = document.getElementById('new-utensil');
+                const utensilName = input.value.trim();
+                
+                if (utensilName) {
+                    const utensilsContainer = document.getElementById('utensils-container');
+                    utensilsContainer.appendChild(createItemElement(utensilName, 'utensils'));
+                    input.value = '';
+                }
+            });
+            
+            // Enter nos campos de input personalizados
+            document.getElementById('new-fruit').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('add-fruit').click();
+                }
+            });
+            
+            document.getElementById('new-topping').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('add-topping').click();
+                }
+            });
+            
+            document.getElementById('new-acai').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('add-acai').click();
+                }
+            });
+            
+            document.getElementById('new-cleaning').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('add-cleaning').click();
+                }
+            });
+            
+            document.getElementById('new-utensil').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('add-utensil').click();
+                }
+            });
+            
+            // Botão para limpar a lista
+            document.getElementById('clear-list').addEventListener('click', function() {
+                state.selectedItems = {};
+                
+                // Desmarca todos os checkboxes
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Reseta todas as quantidades para 1 e unidade para UN
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    input.value = '1';
+                });
+                
+                document.querySelectorAll('.unit-btn').forEach(btn => {
+                    if (btn.dataset.unit === 'un') {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                updateList();
+            });
+            
+            // Botão para gerar PDF
+            document.getElementById('generate-pdf').addEventListener('click', generatePDF);
+        }
+
+        // Aumenta a quantidade de um item
+        function increaseQuantity(itemId) {
+            const quantityInput = document.querySelector(`.quantity-input[data-id="${itemId}"]`);
+            let quantity = parseInt(quantityInput.value) || 1;
+            quantity++;
+            quantityInput.value = quantity;
+            
+            // Atualiza no estado se o item estiver selecionado
+            if (state.selectedItems[itemId]) {
+                state.selectedItems[itemId].quantity = quantity;
+                updateList();
+            }
+        }
+
+        // Diminui a quantidade de um item
+        function decreaseQuantity(itemId) {
+            const quantityInput = document.querySelector(`.quantity-input[data-id="${itemId}"]`);
+            let quantity = parseInt(quantityInput.value) || 1;
+            
+            if (quantity > 1) {
+                quantity--;
+                quantityInput.value = quantity;
+                
+                // Atualiza no estado se o item estiver selecionado
+                if (state.selectedItems[itemId]) {
+                    state.selectedItems[itemId].quantity = quantity;
+                    updateList();
+                }
+            }
+        }
+
+        // Atualiza a lista de itens selecionados
+        function updateList() {
+            const container = document.getElementById('list-items-container');
+            
+            // Limpa o container
+            container.innerHTML = '';
+            
+            // Se não houver itens, mostra mensagem
+            if (Object.keys(state.selectedItems).length === 0) {
+                container.innerHTML = '<div class="empty-list">Nenhum item adicionado à lista. Selecione itens das categorias ao lado.</div>';
+                return;
+            }
+            
+            // Adiciona cada item à lista
+            for (const itemId in state.selectedItems) {
+                const item = state.selectedItems[itemId];
+                const unitText = item.unit === 'cx' ? 'CX' : 'UN';
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'list-item';
+                itemDiv.innerHTML = `
+                    <div class="list-item-name">${item.name}</div>
+                    <div class="list-item-details">
+                        <div class="list-item-quantity">${item.quantity}</div>
+                        <div class="list-item-unit">${unitText}</div>
+                    </div>
+                `;
+                
+                container.appendChild(itemDiv);
+            }
+        }
+
+        // Gera o PDF
+        function generatePDF() {
+            // Verifica se há itens na lista
+            if (Object.keys(state.selectedItems).length === 0) {
+                alert('Adicione itens à lista antes de gerar o PDF.');
+                return;
+            }
+            
+            // Cria um elemento temporário para o PDF
+            const pdfContent = document.createElement('div');
+            pdfContent.style.padding = '20px';
+            pdfContent.style.fontFamily = 'Arial, sans-serif';
+            pdfContent.style.width = '210mm'; // Tamanho A4
+            
+            // Correção: Adiciona o elemento ao corpo do documento (invisível) para o html2canvas funcionar
+            pdfContent.style.position = 'absolute';
+            pdfContent.style.left = '-9999px';
+            document.body.appendChild(pdfContent);
+            
+            // Verifica se tem logo para adicionar ao PDF
+            const logoImg = document.getElementById('company-logo');
+            let logoHtml = '';
+            if (logoImg.style.display !== 'none' && logoImg.src) {
+                logoHtml = `<img src="${logoImg.src}" style="max-height: 60px; margin-bottom: 15px;">`;
+            }
+            
+            // Cabeçalho do PDF
+            pdfContent.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    ${logoHtml}
+                    <h1 style="color: #4a00e0; margin-bottom: 10px;">LISTA DE ITENS RANCHO DO AÇAI</h1>
+                    <p style="color: #666;">Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+                    <hr style="border: 1px solid #eee; margin: 20px 0;">
+                </div>
+            `;
+            
+            // Agrupa itens por categoria
+            const categorizedItems = {
+                'Frutas': [],
+                'Açaí e Sorvetes': [],
+                'Complementos': [],
+                'Produtos de Limpeza': [],
+                'Utensílios': [],
+                'Outros': []
+            };
+            
+            for (const itemId in state.selectedItems) {
+                const item = state.selectedItems[itemId];
+                let category = 'Outros';
+                
+                if (itemId.startsWith('fruits-')) {
+                    category = 'Frutas';
+                } else if (itemId.startsWith('acai-')) {
+                    category = 'Açaí e Sorvetes';
+                } else if (itemId.startsWith('toppings-')) {
+                    category = 'Complementos';
+                } else if (itemId.startsWith('cleaning-')) {
+                    category = 'Produtos de Limpeza';
+                } else if (itemId.startsWith('utensils-')) {
+                    category = 'Utensílios';
+                }
+                
+                categorizedItems[category].push(item);
+            }
+            
+            // Adiciona cada categoria ao PDF
+            for (const category in categorizedItems) {
+                if (categorizedItems[category].length > 0) {
+                    let categoryHTML = `
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="color: #8e2de2; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; margin-bottom: 15px;">
+                                ${category}
+                            </h2>
+                            <table style="width: 100%; border-collapse: collapse;">
+                    `;
+                    
+                    categorizedItems[category].forEach(item => {
+                        const unitText = item.unit === 'cx' ? 'Caixa(s)' : 'Unidade(s)';
+                        categoryHTML += `
+                            <tr style="border-bottom: 1px solid #f8f8f8;">
+                                <td style="padding: 8px 0; width: 70%;">${item.name}</td>
+                                <td style="padding: 8px 0; text-align: right; width: 15%; font-weight: bold;">${item.quantity}</td>
+                                <td style="padding: 8px 0; text-align: left; width: 15%;">${unitText}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    categoryHTML += `</table></div>`;
+                    pdfContent.innerHTML += categoryHTML;
+                }
+            }
+            
+            // Total de itens por unidade
+            let totalUn = 0;
+            let totalCx = 0;
+            
+            for (const itemId in state.selectedItems) {
+                const item = state.selectedItems[itemId];
+                if (item.unit === 'un') {
+                    totalUn += item.quantity;
+                } else if (item.unit === 'cx') {
+                    totalCx += item.quantity;
+                }
+            }
+            
+            pdfContent.innerHTML += `
+                <div style="margin-top: 30px; padding-top: 15px; border-top: 2px solid #4a00e0;">
+                    <h3 style="color: #4a00e0;">
+                        Resumo:
+                    </h3>
+                    <p>Total de itens em unidades: <strong>${totalUn}</strong></p>
+                    <p>Total de itens em caixas: <strong>${totalCx}</strong></p>
+                    <p style="margin-top: 10px; font-weight: bold;">Total geral de itens: <span style="color: #4a00e0;">${totalUn + totalCx}</span></p>
+                </div>
+                
+                <div style="margin-top: 40px; text-align: center; color: #888; font-size: 0.9rem;">
+                    <p>Lista gerada pelo Sistema de Controle para Açaí</p>
+                </div>
+            `;
+            
+            // Usa html2canvas para capturar o conteúdo e jsPDF para gerar o PDF
+            html2canvas(pdfContent, {
+                scale: 2,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                // Remove o elemento temporário do DOM após a captura
+                document.body.removeChild(pdfContent);
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210;
+                const pageHeight = 297;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+                
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                // Adiciona páginas extras se necessário
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                // Salva o PDF
+                pdf.save(`lista-acai-${new Date().toISOString().slice(0,10)}.pdf`);
+            });
+        }
+    </script>
+</body>
+</html>
